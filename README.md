@@ -76,10 +76,26 @@ git push
 | `source` | 예 | `{ "name", "url" }`. 날짜를 확인한 곳 |
 | `verified` | 예 | 공식 문서에서 확인했으면 `true`, 아니면 `false` |
 
+## 주간 자동 갱신 (Windows)
+
+매주 일요일 22:00에 PC가 켜져 있고 로그인된 상태면, Claude Code가 공식 자료를 다시 찾아 `data/`를 갱신하고 바뀐 것이 있을 때만 GitHub에 올립니다. PC가 꺼져 있던 주는 건너뜁니다.
+
+```
+pwsh -File update/register-task.ps1      # 작업 스케줄러에 등록
+pwsh -File update/run.ps1 -DryRun        # 올리지 않고 한 번 실행해 보기
+```
+
+- `update/PROMPT.md` — 조사 지시문. 공식 페이지에서 직접 읽은 날짜만 "확인됨"으로 표시합니다.
+- `update/check.py` — 올리기 전 검사. `data/events.json`, `data/SOURCES.md` 밖의 파일이 바뀌었거나, 이메일·전화번호·주민등록번호 형태·봇 토큰 형태·로컬 경로·PC 사용자 이름이 들어 있거나, 커밋 작성자가 GitHub noreply 주소가 아니면 올리지 않고 변경을 되돌립니다.
+- 실행 기록은 `update/logs/`에 남고 GitHub에는 올라가지 않습니다.
+- 갱신 결과는 사람이 확인하지 않고 공개됩니다. 커밋 기록에서 무엇이 바뀌었는지 가끔 확인하세요.
+- 필요한 것: Claude Code(`claude`), `git`(푸시 권한), Python, PowerShell 7.
+
 ## 테스트
 
 ```
 python -m unittest discover -s notify
+python -m unittest discover -s update
 node --test "assets/*.test.mjs"
 ```
 
