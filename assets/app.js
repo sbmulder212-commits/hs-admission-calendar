@@ -1,5 +1,5 @@
 import { todayKst, eventsOn, upcoming, dday, ddayLabel, monthGrid, endOf } from "./lib.js";
-import { CATEGORIES, catClass, el, detailHref, rangeText, loadEvents, showError, registerSw } from "./ui.js";
+import { CATEGORIES, catClass, el, detailHref, rangeText, loadEvents, showError, registerSw, clearBoot } from "./ui.js";
 
 const today = todayKst();
 let [year, month] = today.split("-").map(Number);
@@ -90,6 +90,7 @@ try {
   events = await loadEvents();
   renderCalendar();
   renderUpcoming();
+  clearBoot();
 } catch {
   showError($("main"));
 }

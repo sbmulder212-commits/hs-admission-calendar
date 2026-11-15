@@ -21,7 +21,11 @@ export async function loadEvents() {
   return response.json();
 }
 
+// 스크립트가 실행되면 HTML에 미리 적어 둔 안내 문구를 지운다.
+export const clearBoot = () => document.getElementById("boot")?.remove();
+
 export function showError(container) {
+  clearBoot();
   container.replaceChildren(
     el("p", "notice", "일정 데이터를 불러오지 못했습니다. 주소를 통해 열었는지 확인해 주세요.")
   );

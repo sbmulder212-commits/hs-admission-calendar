@@ -93,6 +93,9 @@ def send(token: str, chat_id: str, text: str) -> None:
         raise RuntimeError(f"텔레그램 전송 실패: HTTP {error.code} {detail}") from None
     except urllib.error.URLError as error:
         raise RuntimeError(f"텔레그램 연결 실패: {error.reason}") from None
+    except Exception as error:
+        # 그 밖의 예외(잘못된 URL 등)는 메시지에 토큰이 들어갈 수 있어 종류만 남긴다.
+        raise RuntimeError(f"텔레그램 전송 실패: {type(error).__name__}") from None
     if not body.get("ok"):
         raise RuntimeError(f"텔레그램 전송 실패: {body.get('description')}")
 
@@ -107,8 +110,8 @@ def main(argv: list[str] | None = None, events_path: Path | None = None, today: 
     if "--dry-run" in argv:
         print(text)
         return 0
-    token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
     missing = [name for name, value in (("TELEGRAM_BOT_TOKEN", token), ("TELEGRAM_CHAT_ID", chat_id)) if not value]
     if missing:
         print(f"환경 변수 없음: {', '.join(missing)}", file=sys.stderr)

@@ -115,5 +115,80 @@ class MainTest(unittest.TestCase):
         self.assertIn("TELEGRAM_BOT_TOKEN", err)
 
 
+class FakeResponse(io.BytesIO):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+
+class SendTest(unittest.TestCase):
+    TOKEN = "123456:SECRET-TOKEN"
+
+    def test_send_posts_plain_text_without_parse_mode(self):
+        import urllib.parse
+
+        from notify import send
+
+        with mock.patch("urllib.request.urlopen", return_value=FakeResponse(b'{"ok": true}')) as urlopen:
+            send(self.TOKEN, "-100", "A<b>&*_")
+        request = urlopen.call_args.args[0]
+        body = urllib.parse.parse_qs(request.data.decode())
+        self.assertEqual(body["text"], ["A<b>&*_"])
+        self.assertEqual(body["chat_id"], ["-100"])
+        self.assertNotIn("parse_mode", body)
+
+    def test_send_error_never_contains_token(self):
+        from notify import send
+
+        # 토큰 끝에 줄바꿈이 붙으면 urllib이 URL을 담은 예외를 낸다.
+        with self.assertRaises(RuntimeError) as caught:
+            send(self.TOKEN + "\n", "-100", "x")
+        self.assertNotIn("SECRET-TOKEN", str(caught.exception))
+        self.assertIsNone(caught.exception.__cause__)
+
+    def test_send_raises_when_telegram_says_not_ok(self):
+        from notify import send
+
+        reply = FakeResponse(b'{"ok": false, "description": "chat not found"}')
+        with mock.patch("urllib.request.urlopen", return_value=reply):
+            with self.assertRaises(RuntimeError):
+                send(self.TOKEN, "-100", "x")
+
+    def test_main_strips_token_and_sends(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "events.json"
+            path.write_text(json.dumps([ev("2026-12-03")], ensure_ascii=False), encoding="utf-8")
+            env = {"TELEGRAM_BOT_TOKEN": self.TOKEN + "\n", "TELEGRAM_CHAT_ID": " -100 ", "SITE_URL": URL}
+            with mock.patch.dict(os.environ, env, clear=True), mock.patch("notify.send") as send:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    code = main([], events_path=path, today=TODAY)
+        self.assertEqual(code, 0)
+        self.assertEqual(send.call_args.args[:2], (self.TOKEN, "-100"))
+
+
+class DataConsistencyTest(unittest.TestCase):
+    def events(self):
+        path = Path(__file__).parent.parent / "data" / "events.json"
+        return {e["id"]: e for e in json.loads(path.read_text(encoding="utf-8"))}
+
+    def test_conflicting_deadline_uses_earlier_date(self):
+        self.assertEqual(self.events()["seoul-oego-apply"]["end"], "2026-12-05")
+
+    def test_entry_with_conflicting_official_dates_is_unverified(self):
+        self.assertFalse(self.events()["sp-extra"]["verified"])
+
+
+class StaticNoticeTest(unittest.TestCase):
+    # 스크립트가 실행되지 못해도(file:// 등) 안내 문구가 보여야 한다.
+    def test_pages_have_static_fallback_notice(self):
+        root = Path(__file__).parent.parent
+        for name in ("index.html", "detail.html"):
+            html = (root / name).read_text(encoding="utf-8")
+            self.assertIn('id="boot"', html, name)
+            self.assertIn("주소", html, name)
+
+
 if __name__ == "__main__":
     unittest.main()

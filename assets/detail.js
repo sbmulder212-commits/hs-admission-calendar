@@ -1,5 +1,5 @@
 import { isYmd, eventsOn } from "./lib.js";
-import { catClass, el, rangeText, loadEvents, showError, registerSw } from "./ui.js";
+import { catClass, el, rangeText, loadEvents, showError, registerSw, clearBoot } from "./ui.js";
 
 const main = document.getElementById("main");
 const ymd = new URLSearchParams(location.search).get("date");
@@ -63,6 +63,7 @@ try {
   }
   if (events.length) main.replaceChildren(...events.map(card));
   else main.replaceChildren(el("p", "notice", "이 날짜에는 일정이 없습니다."));
+  clearBoot();
 } catch {
   showError(main);
 }

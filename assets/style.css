@@ -52,6 +52,7 @@ ul { padding: 0; list-style: none; }
 .top h1 { font-size: 1.4rem; }
 #today-label, .meta, .notice { color: var(--muted); font-size: .9rem; }
 .back { text-decoration: none; }
+.boot { max-width: 1200px; margin: 0 auto; padding: 0 16px 12px; }
 
 .layout {
   display: grid;
