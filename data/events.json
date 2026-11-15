@@ -1,1 +1,6 @@
-[]
+[
+  {"id":"tmp-today","date":"2026-11-15","title":"[임시] 오늘 하루 일정","category":"일반고","summary":"임시 요약 <b>&</b>","requirements":["요강 1","요강 2"],"cautions":["주의 1"],"schools":[{"name":"예시고","url":"https://example.com/"}],"source":{"name":"예시 출처","url":"https://example.com/s"},"verified":true},
+  {"id":"tmp-range","date":"2026-11-12","end":"2026-11-20","title":"[임시] 기간 일정","category":"자사고","summary":"기간 요약","source":{"name":"예시 출처","url":"https://example.com/s"},"verified":true},
+  {"id":"tmp-next","date":"2026-12-08","title":"[임시] 다음 달 일정","category":"외고·국제고","summary":"다음 달","schools":[{"name":"가고","url":"https://example.com/a"},{"name":"나고","url":"https://example.com/b"}],"source":{"name":"예시 출처","url":"https://example.com/s"},"verified":false},
+  {"id":"tmp-past","date":"2026-11-02","title":"[임시] 지난 일정","category":"특성화고·마이스터고","summary":"지남","source":{"name":"예시 출처","url":"https://example.com/s"},"verified":true}
+]

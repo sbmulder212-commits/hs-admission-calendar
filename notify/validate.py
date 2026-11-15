@@ -64,6 +64,7 @@ def validate_events(events: list) -> list[str]:
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")
     path = Path(__file__).parent.parent / "data" / "events.json"
     problems = validate_events(json.loads(path.read_text(encoding="utf-8")))
     for problem in problems:
