@@ -9,7 +9,8 @@ Set-Location $root
 $logDir = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $log = Join-Path $logDir ("{0}.log" -f (Get-Date -Format 'yyyy-MM-dd_HHmmss'))
-function Log($message) { "$(Get-Date -Format 'HH:mm:ss') $message" | Tee-Object -FilePath $log -Append }
+# Out-Host: 기록 문자열이 함수 반환값에 섞이면 Run의 종료 코드 비교가 깨진다.
+function Log($message) { "$(Get-Date -Format 'HH:mm:ss') $message" | Tee-Object -FilePath $log -Append | Out-Host }
 
 # 검사 실패 시 AI가 만든 변경을 버린다. 시작할 때 작업 폴더가 깨끗했으므로 잃는 것은 그 변경뿐이다.
 function Abort($reason) {
