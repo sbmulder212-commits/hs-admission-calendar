@@ -34,7 +34,7 @@ if ((Run 'git pull' { git pull --ff-only }) -ne 0) { Log '중단: git pull 실�
 # 허용 도구만 쓴다: 웹 조회, 읽기, data/ 수정, 데이터 검사. 그 밖의 도구는 대화창이 없어 거부된다.
 $tools = @(
     'WebSearch', 'WebFetch', 'Read', 'Glob', 'Grep',
-    'Edit(data/**)', 'Write(data/**)',
+    'Edit(data/**)',
     'Bash(python notify/validate.py)'
 )
 $prompt = Get-Content (Join-Path $PSScriptRoot 'PROMPT.md') -Raw -Encoding utf8
