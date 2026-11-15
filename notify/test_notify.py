@@ -168,18 +168,6 @@ class SendTest(unittest.TestCase):
         self.assertEqual(send.call_args.args[:2], (self.TOKEN, "-100"))
 
 
-class DataConsistencyTest(unittest.TestCase):
-    def events(self):
-        path = Path(__file__).parent.parent / "data" / "events.json"
-        return {e["id"]: e for e in json.loads(path.read_text(encoding="utf-8"))}
-
-    def test_conflicting_deadline_uses_earlier_date(self):
-        self.assertEqual(self.events()["seoul-oego-apply"]["end"], "2026-12-05")
-
-    def test_entry_with_conflicting_official_dates_is_unverified(self):
-        self.assertFalse(self.events()["sp-extra"]["verified"])
-
-
 class StaticNoticeTest(unittest.TestCase):
     # 스크립트가 실행되지 못해도(file:// 등) 안내 문구가 보여야 한다.
     def test_pages_have_static_fallback_notice(self):

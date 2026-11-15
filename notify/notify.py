@@ -67,6 +67,7 @@ def build_message(events: list[dict], today: date, site_url: str) -> str | None:
 
 def split_message(text: str, limit: int = 4096) -> list[str]:
     """텔레그램 글자 수 한도에 맞춰 줄 경계에서 나눈다."""
+    # shortcut: 한 줄이 limit보다 길면 나누지 못한다, 제목이 4000자를 넘는 일정이 생기면 줄 내부 분할 추가
     parts, current = [], ""
     for line in text.split("\n"):
         candidate = line if not current else f"{current}\n{line}"
