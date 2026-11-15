@@ -1,5 +1,5 @@
 import { isYmd, eventsOn } from "./lib.js";
-import { catClass, el, rangeText, loadEvents, showError, registerSw, clearBoot } from "./ui.js";
+import { catClass, el, rangeText, loadEvents, showError, clearBoot } from "./ui.js";
 
 const main = document.getElementById("main");
 const ymd = new URLSearchParams(location.search).get("date");
@@ -54,7 +54,6 @@ function card(event) {
   return article;
 }
 
-registerSw();
 try {
   const events = eventsOn(await loadEvents(), ymd);
   if (isYmd(ymd)) {

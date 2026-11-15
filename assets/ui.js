@@ -30,7 +30,3 @@ export function showError(container) {
     el("p", "notice", "일정 데이터를 불러오지 못했습니다. 주소를 통해 열었는지 확인해 주세요.")
   );
 }
-
-export function registerSw() {
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});
-}
