@@ -21,6 +21,27 @@ export async function loadEvents() {
   return response.json();
 }
 
+// 체크 표시는 이 기기 브라우저에만 저장한다. 저장소를 못 쓰면 그 세션에서만 유지된다.
+const DONE_KEY = "goip.done.v1";
+
+export function loadDone(storage) {
+  try {
+    const list = JSON.parse((storage ?? globalThis.localStorage).getItem(DONE_KEY));
+    return new Set(Array.isArray(list) ? list.filter((id) => typeof id === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+export function saveDone(done, storage) {
+  try {
+    (storage ?? globalThis.localStorage).setItem(DONE_KEY, JSON.stringify([...done]));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // 스크립트가 실행되면 HTML에 미리 적어 둔 안내 문구를 지운다.
 export const clearBoot = () => document.getElementById("boot")?.remove();
 
