@@ -186,6 +186,7 @@ section h2:first-child { margin-top: 0; }
 }
 
 /* 상세 페이지 */
+body:not([data-view]) { padding-bottom: 0; }
 .detail { display: grid; gap: var(--s3); padding: 0 var(--s3) var(--s4); max-width: 800px; margin: 0 auto; }
 .card { padding: var(--s3); border-left: 6px solid var(--cat-0); }
 .card.cat-1 { border-left-color: var(--cat-1); }
@@ -211,3 +212,8 @@ section h2:first-child { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* 점검표 반영: 탭 막대가 포커스를 가리지 않게, 눌림 피드백, 탭 지연 제거 */
+html { scroll-padding-bottom: var(--tabs-h); }
+a, button, input, label { touch-action: manipulation; }
+.tabs a:active, .month-nav button:active, .cell.has:active, .it-title:active { opacity: .7; }
