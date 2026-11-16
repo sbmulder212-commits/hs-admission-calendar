@@ -72,6 +72,7 @@ function renderTiles() {
 
 function taskItem(event) {
   const li = el("li", done.has(event.id) ? "it done" : "it");
+  li.dataset.id = event.id;
   const box = el("input");
   box.type = "checkbox";
   box.checked = done.has(event.id);
@@ -79,7 +80,12 @@ function taskItem(event) {
   box.addEventListener("change", () => {
     if (box.checked) done.add(event.id);
     else done.delete(event.id);
-    li.classList.toggle("done", box.checked);
+    // 같은 일정이 다른 목록에도 있으므로 모든 행을 맞춘다. 다시 그리면 키보드 포커스를 잃는다.
+    for (const row of document.querySelectorAll(".it")) {
+      if (row.dataset.id !== event.id) continue;
+      row.classList.toggle("done", box.checked);
+      row.querySelector("input").checked = box.checked;
+    }
     saveDone(done);
     renderTiles();
   });
