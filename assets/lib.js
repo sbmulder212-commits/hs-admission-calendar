@@ -31,6 +31,37 @@ export function upcoming(events, today) {
   return events.filter((e) => endOf(e) >= today).sort((a, b) => a.date.localeCompare(b.date));
 }
 
+export const addDays = (ymd, n) => toYmd(toUtc(ymd) + n * DAY);
+
+const byDate = (a, b) => a.date.localeCompare(b.date);
+
+// 오늘 걸치거나 7일 안에 시작하는 일정
+export function thisWeek(events, today) {
+  const last = addDays(today, 7);
+  return events.filter((e) => e.date <= last && endOf(e) >= today).sort(byDate);
+}
+
+// 8~14일 안에 시작하는 일정
+export function nextWeek(events, today) {
+  const from = addDays(today, 7);
+  const last = addDays(today, 14);
+  return events.filter((e) => e.date > from && e.date <= last).sort(byDate);
+}
+
+// 끝내지 않은 일정 중 다음에 신경 쓸 날(시작 전이면 시작일, 진행 중이면 끝나는 날)이 가장 이른 것
+export function nearestDeadline(events, today, doneIds) {
+  let best = null;
+  for (const event of events) {
+    if (doneIds.has(event.id) || endOf(event) < today) continue;
+    const starts = event.date > today;
+    const ymd = starts ? event.date : endOf(event);
+    if (!best || ymd < best.ymd || (ymd === best.ymd && event.date < best.event.date)) {
+      best = { event, ymd, phase: starts ? "starts" : "ends" };
+    }
+  }
+  return best && { ...best, days: dday(best.ymd, today) };
+}
+
 export function dday(ymd, today) {
   return Math.round((toUtc(ymd) - toUtc(today)) / DAY);
 }
