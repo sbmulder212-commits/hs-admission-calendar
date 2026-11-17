@@ -17,6 +17,14 @@
   --cat-2: #8a3fa0;
   --cat-3: #c2410c;
   --cat-4: #a16207;
+  /* 달력 상태: 중요한 순서. 마감과 발표는 꽉 찬 색, 나머지는 옅은 색 */
+  --st-deadline-bg: #b91c1c; --st-deadline-fg: #ffffff;
+  --st-result-bg: #047857; --st-result-fg: #ffffff;
+  --st-register-bg: #0f766e; --st-register-fg: #ffffff;
+  --st-interview-bg: #ede9fe; --st-interview-fg: #5b21b6;
+  --st-apply-bg: #fef3c7; --st-apply-fg: #92400e;
+  --st-info-bg: #f1f5f9; --st-info-fg: #475569;
+  --st-other-bg: #f1f5f9; --st-other-fg: #475569;
   --s1: 4px;
   --s2: 8px;
   --s3: 16px;
@@ -29,7 +37,11 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.5 "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font: 16px/1.6 "Pretendard Variable", Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
   padding-bottom: calc(var(--tabs-h) + env(safe-area-inset-bottom));
 }
 a { color: var(--primary); }
@@ -46,7 +58,9 @@ ul { padding: 0; list-style: none; }
   max-width: 1200px;
   margin: 0 auto;
 }
-.top h1 { font-size: 1.4rem; }
+.top h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+h1, h2, h3 { text-wrap: balance; }
+.n, .d, .when, .num, #today-label { font-variant-numeric: tabular-nums; }
 #today-label, .meta, .notice { color: var(--muted); font-size: .9rem; }
 .boot { max-width: 1200px; margin: 0 auto; padding: 0 var(--s3) var(--s2); }
 .back { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
@@ -59,7 +73,7 @@ ul { padding: 0; list-style: none; }
   margin: 0 auto;
 }
 .col { display: grid; gap: var(--s3); min-width: 0; align-content: start; }
-section h2 { font-size: 1.05rem; margin: var(--s3) 0 var(--s2); }
+section h2 { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; margin: var(--s4) 0 var(--s2); }
 section h2:first-child { margin-top: 0; }
 
 /* 타일: 둥근 모서리와 그림자는 타일과 목록 카드에만 쓴다 */
@@ -72,17 +86,23 @@ section h2:first-child { margin-top: 0; }
 .tile { padding: var(--s3); min-width: 0; }
 .tile.primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 60%, #000); }
 .tile .k { font-size: .85rem; }
-.tile .n { font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
+.tile .n { font-size: 2.1rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; }
 .tile .sub { font-size: .85rem; overflow-wrap: anywhere; }
 
 .tasks { overflow: hidden; }
 .it { display: grid; grid-template-columns: 44px 1fr; gap: var(--s1); padding: var(--s2) var(--s3) var(--s2) var(--s1); border-top: 1px solid var(--bg); }
 .it:first-child { border-top: 0; }
+.it { box-shadow: inset 4px 0 0 var(--accent, transparent); }
+.it[data-kind="result"] { --accent: var(--st-result-bg); }
+.it[data-kind="register"] { --accent: var(--st-register-bg); }
+.it[data-kind="interview"] { --accent: #7c3aed; }
+.it[data-kind="apply"] { --accent: #d97706; }
+.it[data-kind="info"] { --accent: #94a3b8; }
 .tasks > .notice { padding: var(--s3); }
 .ck { display: grid; place-items: center; min-width: 44px; min-height: 44px; cursor: pointer; }
 .ck input { width: 24px; height: 24px; accent-color: var(--primary); cursor: pointer; }
 .it-body { display: grid; gap: var(--s1); align-content: center; min-width: 0; }
-.it-title { display: flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
+.it-title { display: flex; font-size: 1.02rem; align-items: center; min-height: 44px; font-weight: 700; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
 .it-title:hover { text-decoration: underline; }
 .it.done .it-title { color: var(--muted); text-decoration: line-through; }
 .meta { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
@@ -121,12 +141,12 @@ section h2:first-child { margin-top: 0; }
   overflow: hidden;
 }
 .cell.empty { background: transparent; }
-.cell.has { background: var(--tile-on); font-weight: 700; }
+.cell.has { font-weight: 700; }
+.kind { font-size: .68rem; font-weight: 800; letter-spacing: 0; line-height: 1.1; }
 .cell.has:hover { outline: 2px solid var(--primary); }
 .cell.today { box-shadow: inset 0 0 0 2px var(--primary); }
 .cell.today .num { color: var(--primary); font-weight: 800; }
 .num { font-size: .85rem; }
-.dots { display: flex; gap: 3px; flex-wrap: wrap; }
 .cell-title, .more { display: none; font-size: .75rem; }
 .more { color: var(--muted); }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--cat-0); }
@@ -134,6 +154,15 @@ section h2:first-child { margin-top: 0; }
 .dot.cat-2 { background: var(--cat-2); }
 .dot.cat-3 { background: var(--cat-3); }
 .dot.cat-4 { background: var(--cat-4); }
+.st-deadline { background: var(--st-deadline-bg); color: var(--st-deadline-fg); }
+.st-result { background: var(--st-result-bg); color: var(--st-result-fg); }
+.st-register { background: var(--st-register-bg); color: var(--st-register-fg); }
+.st-interview { background: var(--st-interview-bg); color: var(--st-interview-fg); }
+.st-apply { background: var(--st-apply-bg); color: var(--st-apply-fg); }
+.st-info { background: var(--st-info-bg); color: var(--st-info-fg); }
+.st-other { background: var(--st-other-bg); color: var(--st-other-fg); }
+.cell.st-deadline .more, .cell.st-result .more, .cell.st-register .more { color: inherit; opacity: .85; }
+.swatch { display: inline-block; width: 14px; height: 14px; border-radius: 4px; flex: none; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
 .legend { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-top: var(--s3); font-size: .85rem; color: var(--muted); }
 .legend li { display: flex; align-items: center; gap: 6px; }
 
@@ -195,4 +224,4 @@ body:not([data-view]) { padding-bottom: 0; }
 html { scroll-padding-bottom: var(--tabs-h); }
 a, button, input, label { touch-action: manipulation; }
 .tabs a:active, .month-nav button:active, .cell.has:active, .it-title:active { opacity: .7; }
-.cell.has.today .num { color: var(--text); }
+.cell.has.today .num { color: inherit; }

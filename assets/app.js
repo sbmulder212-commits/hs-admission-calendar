@@ -1,8 +1,9 @@
 import {
   todayKst, eventsOn, upcoming, thisWeek, nextWeek, nearestDeadline, dday, ddayLabel, monthGrid, endOf,
+  kindOf, dayState,
 } from "./lib.js";
 import {
-  CATEGORIES, catClass, el, detailHref, loadEvents, showError, clearBoot, loadDone, saveDone,
+  catClass, el, detailHref, loadEvents, showError, clearBoot, loadDone, saveDone,
 } from "./ui.js";
 
 let today = todayKst();
@@ -13,6 +14,10 @@ const done = loadDone();
 const $ = (id) => document.getElementById(id);
 const md = (ymd) => `${Number(ymd.slice(5, 7))}/${Number(ymd.slice(8))}`;
 const span = (e) => (e.end ? `${md(e.date)} ~ ${md(e.end)}` : md(e.date));
+
+// 달력 칸의 상태. 중요한 순서로 나열한다.
+const KIND_NAME = { deadline: "접수 마감", result: "발표", register: "등록", interview: "면접", apply: "접수 기간", info: "설명회", other: "기타" };
+const KIND_SHORT = { deadline: "마감", result: "발표", register: "등록", interview: "면접", apply: "접수", info: "설명", other: "" };
 
 function renderCalendar() {
   $("month-title").textContent = `${year}년 ${month}월`;
@@ -25,18 +30,16 @@ function renderCalendar() {
         continue;
       }
       const dayEvents = eventsOn(events, ymd);
-      const cell = el(dayEvents.length ? "a" : "div", "cell");
+      const state = dayState(events, ymd);
+      const cell = el(state ? "a" : "div", "cell");
       if (ymd === today) cell.classList.add("today");
       cell.append(el("span", "num", String(Number(ymd.slice(8)))));
-      if (dayEvents.length) {
+      if (state) {
         cell.href = detailHref(ymd);
-        cell.classList.add("has");
-        cell.setAttribute("aria-label", `${ymd} 일정 ${dayEvents.length}건`);
-        const dots = el("span", "dots");
-        for (const category of new Set(dayEvents.map((e) => e.category))) {
-          dots.append(el("i", `dot ${catClass(category)}`));
-        }
-        cell.append(dots, el("span", "cell-title", dayEvents[0].title));
+        cell.classList.add("has", `st-${state}`);
+        // 색만으로 구분하지 않도록 글자를 함께 쓴다.
+        cell.setAttribute("aria-label", `${ymd} ${KIND_NAME[state]} 포함 일정 ${dayEvents.length}건`);
+        cell.append(el("span", "kind", KIND_SHORT[state]), el("span", "cell-title", dayEvents[0].title));
         if (dayEvents.length > 1) cell.append(el("span", "more", `+${dayEvents.length - 1}`));
       }
       grid.append(cell);
@@ -73,6 +76,7 @@ function renderTiles() {
 function taskItem(event) {
   const li = el("li", done.has(event.id) ? "it done" : "it");
   li.dataset.id = event.id;
+  li.dataset.kind = kindOf(event);
   const box = el("input");
   box.type = "checkbox";
   box.checked = done.has(event.id);
@@ -160,9 +164,9 @@ addEventListener("hashchange", showView);
 addEventListener("popstate", showView);
 showView();
 
-for (const category of CATEGORIES) {
+for (const state of ["deadline", "result", "register", "interview", "apply", "info"]) {
   const item = el("li");
-  item.append(el("i", `dot ${catClass(category)}`), el("span", null, category));
+  item.append(el("i", `swatch st-${state}`), el("span", null, KIND_NAME[state]));
   $("legend").append(item);
 }
 

@@ -62,6 +62,27 @@ export function nearestDeadline(events, today, doneIds) {
   return best && { ...best, days: dday(best.ymd, today) };
 }
 
+// 제목으로 일정 종류를 나눈다. 괄호 안의 보충 설명은 무시한다.
+export function kindOf(event) {
+  const t = event.title.replace(/\([^)]*\)/g, "");
+  if (t.includes("설명회")) return "info";
+  if (t.includes("발표")) return "result";
+  if (t.includes("접수")) return "apply";
+  if (t.includes("등록")) return "register";
+  if (t.includes("면접")) return "interview";
+  return "other";
+}
+
+// 그날 달력에 칠할 상태. 접수 마지막 날이 가장 강하다. 일정이 없으면 null.
+const STRENGTH = ["deadline", "result", "register", "interview", "apply", "info", "other"];
+export function dayState(events, ymd) {
+  const states = eventsOn(events, ymd).map((e) => {
+    const kind = kindOf(e);
+    return kind === "apply" && endOf(e) === ymd ? "deadline" : kind;
+  });
+  return STRENGTH.find((s) => states.includes(s)) ?? null;
+}
+
 export function dday(ymd, today) {
   return Math.round((toUtc(ymd) - toUtc(today)) / DAY);
 }

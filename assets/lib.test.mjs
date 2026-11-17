@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   todayKst, isYmd, eventsOn, upcoming, dday, ddayLabel, monthGrid,
-  addDays, thisWeek, nextWeek, nearestDeadline,
+  addDays, thisWeek, nextWeek, nearestDeadline, kindOf, dayState,
 } from "./lib.js";
 
 const single = { id: "s", date: "2026-12-05" };
@@ -104,4 +104,32 @@ test("nearestDeadline: 끝낸 것은 건너뛰고, 모두 끝내면 null, 모르
   assert.equal(nearestDeadline(evs, "2026-11-16", new Set(["c"])).event.id, "b");
   assert.equal(nearestDeadline(evs, "2026-12-08", new Set(["gone"])), null);
   assert.equal(nearestDeadline([], "2026-11-16", new Set()), null);
+});
+
+test("kindOf: 제목으로 일정 종류를 나눈다", () => {
+  const k = (title) => kindOf({ title });
+  assert.equal(k("입학설명회: 북일고, 선덕고"), "info");
+  assert.equal(k("서울 특성화고 추가모집 원서 접수 (합격자 발표 12월 3일)"), "apply"); // 괄호 안은 무시
+  assert.equal(k("서울 광역 자사고 추첨, 면접 대상자 발표"), "result");
+  assert.equal(k("하나고 1단계 합격자(면접 대상자) 발표"), "result");
+  assert.equal(k("서울 후기 일반고 배정 학교 발표"), "result");
+  assert.equal(k("서울 후기 일반고 입학 등록"), "register");
+  assert.equal(k("하나고 면접 및 체력검사"), "interview");
+  assert.equal(k("서울 후기 일반고 입학 전 배정 인터넷 접수"), "apply");
+  assert.equal(k("알 수 없는 일정"), "other");
+});
+
+test("dayState: 접수 마감일이 가장 강하고, 같은 날이면 더 중요한 것이 이긴다", () => {
+  const apply = { id: "a", title: "후기 일반고 원서 접수", date: "2026-12-03", end: "2026-12-07" };
+  const result = { id: "r", title: "합격자 발표", date: "2026-12-05" };
+  const info = { id: "i", title: "입학설명회", date: "2026-12-04" };
+  const one = { id: "o", title: "외고 원서 접수", date: "2026-12-10" };
+  const list = [apply, result, info, one];
+  assert.equal(dayState(list, "2026-12-03"), "apply"); // 시작일은 아직 마감이 아니다
+  assert.equal(dayState(list, "2026-12-04"), "apply"); // 접수 > 설명회
+  assert.equal(dayState(list, "2026-12-05"), "result"); // 발표 > 접수
+  assert.equal(dayState(list, "2026-12-07"), "deadline"); // 접수 마지막 날
+  assert.equal(dayState(list, "2026-12-10"), "deadline"); // 하루짜리 접수는 그날이 마감
+  assert.equal(dayState(list, "2026-12-08"), null);
+  assert.equal(dayState([{ id: "d", title: "원서 접수", date: "2026-12-07" }, { id: "e", title: "합격자 발표", date: "2026-12-07" }], "2026-12-07"), "deadline");
 });
