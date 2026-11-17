@@ -47,7 +47,7 @@ function card(event) {
   const sections = [
     listSection("요강", event.requirements),
     listSection("주의할 점", event.cautions),
-    linkSection("학교 안내", event.schools),
+    linkSection("요강·학교 링크", event.schools),
     linkSection("출처", event.source ? [event.source] : []),
   ];
   article.append(...sections.filter(Boolean));
