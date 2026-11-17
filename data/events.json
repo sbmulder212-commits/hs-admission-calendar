@@ -293,6 +293,62 @@
       {
         "name": "서울특별시교육청 (교육정보 > 고입자료실)",
         "url": "https://www.sen.go.kr/"
+      },
+      {
+        "name": "숙명여자고 홈페이지 (강남구)",
+        "url": "https://sm.sen.hs.kr"
+      },
+      {
+        "name": "경기여자고 홈페이지 (강남구)",
+        "url": "https://kgg.sen.hs.kr"
+      },
+      {
+        "name": "진선여자고 홈페이지 (강남구)",
+        "url": "https://jinseon.sen.hs.kr"
+      },
+      {
+        "name": "가락고 홈페이지 (송파구)",
+        "url": "https://garak.sen.hs.kr"
+      },
+      {
+        "name": "문정고 홈페이지 (송파구)",
+        "url": "https://mj.sen.hs.kr"
+      },
+      {
+        "name": "문현고 홈페이지 (송파구)",
+        "url": "https://munhyeon.sen.hs.kr"
+      },
+      {
+        "name": "방산고 홈페이지 (송파구)",
+        "url": "https://bangsan.sen.hs.kr"
+      },
+      {
+        "name": "배명고 홈페이지 (송파구)",
+        "url": "https://bm.sen.hs.kr"
+      },
+      {
+        "name": "보성고 홈페이지 (송파구)",
+        "url": "https://posung.sen.hs.kr"
+      },
+      {
+        "name": "영파여자고 홈페이지 (송파구)",
+        "url": "https://youngpa.sen.hs.kr"
+      },
+      {
+        "name": "오금고 홈페이지 (송파구)",
+        "url": "https://ogeum.sen.hs.kr"
+      },
+      {
+        "name": "잠실고 홈페이지 (송파구)",
+        "url": "https://jamsil.sen.hs.kr"
+      },
+      {
+        "name": "잠실여자고 홈페이지 (송파구)",
+        "url": "https://jamsilg.sen.hs.kr"
+      },
+      {
+        "name": "잠신고 홈페이지 (송파구)",
+        "url": "https://jamsin.sen.hs.kr"
       }
     ],
     "source": {
@@ -1084,6 +1140,62 @@
       {
         "name": "서울특별시교육청 (교육정보 > 고입자료실)",
         "url": "https://www.sen.go.kr/"
+      },
+      {
+        "name": "숙명여자고 홈페이지 (강남구)",
+        "url": "https://sm.sen.hs.kr"
+      },
+      {
+        "name": "경기여자고 홈페이지 (강남구)",
+        "url": "https://kgg.sen.hs.kr"
+      },
+      {
+        "name": "진선여자고 홈페이지 (강남구)",
+        "url": "https://jinseon.sen.hs.kr"
+      },
+      {
+        "name": "가락고 홈페이지 (송파구)",
+        "url": "https://garak.sen.hs.kr"
+      },
+      {
+        "name": "문정고 홈페이지 (송파구)",
+        "url": "https://mj.sen.hs.kr"
+      },
+      {
+        "name": "문현고 홈페이지 (송파구)",
+        "url": "https://munhyeon.sen.hs.kr"
+      },
+      {
+        "name": "방산고 홈페이지 (송파구)",
+        "url": "https://bangsan.sen.hs.kr"
+      },
+      {
+        "name": "배명고 홈페이지 (송파구)",
+        "url": "https://bm.sen.hs.kr"
+      },
+      {
+        "name": "보성고 홈페이지 (송파구)",
+        "url": "https://posung.sen.hs.kr"
+      },
+      {
+        "name": "영파여자고 홈페이지 (송파구)",
+        "url": "https://youngpa.sen.hs.kr"
+      },
+      {
+        "name": "오금고 홈페이지 (송파구)",
+        "url": "https://ogeum.sen.hs.kr"
+      },
+      {
+        "name": "잠실고 홈페이지 (송파구)",
+        "url": "https://jamsil.sen.hs.kr"
+      },
+      {
+        "name": "잠실여자고 홈페이지 (송파구)",
+        "url": "https://jamsilg.sen.hs.kr"
+      },
+      {
+        "name": "잠신고 홈페이지 (송파구)",
+        "url": "https://jamsin.sen.hs.kr"
       }
     ],
     "source": {
