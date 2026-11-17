@@ -92,6 +92,10 @@ pwsh -File update/run.ps1 -DryRun        # 올리지 않고 한 번 실행해 �
 - 갱신 결과는 사람이 확인하지 않고 공개됩니다. 커밋 기록에서 무엇이 바뀌었는지 가끔 확인하세요.
 - 필요한 것: Claude Code(`claude`), `git`(푸시 권한), Python, PowerShell 7.
 
+## 글꼴
+
+화면 글꼴은 [Pretendard](https://github.com/orioncactus/pretendard)(SIL Open Font License 1.1)이고, 파일은 `assets/fonts/`에 들어 있습니다(약 2MB). 라이선스 전문은 같은 폴더의 `PRETENDARD-LICENSE.txt`입니다.
+
 ## 테스트
 
 ```
