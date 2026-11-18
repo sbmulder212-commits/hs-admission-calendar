@@ -1,5 +1,5 @@
-import { isYmd, eventsOn } from "./lib.js";
-import { catClass, el, rangeText, loadEvents, showError, clearBoot } from "./ui.js";
+import { isYmd, eventsOn, filterByTracks } from "./lib.js";
+import { catClass, el, rangeText, loadEvents, showError, clearBoot, loadTracks } from "./ui.js";
 
 const main = document.getElementById("main");
 const ymd = new URLSearchParams(location.search).get("date");
@@ -55,7 +55,7 @@ function card(event) {
 }
 
 try {
-  const events = eventsOn(await loadEvents(), ymd);
+  const events = eventsOn(filterByTracks(await loadEvents(), loadTracks()), ymd);
   if (isYmd(ymd)) {
     document.getElementById("date-title").textContent = ymd;
     document.title = `${ymd} · 고입 일정`;

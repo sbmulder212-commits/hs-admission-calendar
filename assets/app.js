@@ -1,15 +1,17 @@
 import {
   todayKst, eventsOn, upcoming, thisWeek, nextWeek, nearestDeadline, dday, ddayLabel, monthGrid, endOf,
-  kindOf, dayState,
+  kindOf, dayState, filterByTracks,
 } from "./lib.js";
 import {
-  catClass, el, detailHref, loadEvents, showError, clearBoot, loadDone, saveDone,
+  catClass, el, detailHref, loadEvents, showError, clearBoot, loadDone, saveDone, TRACKS, loadTracks, saveTracks,
 } from "./ui.js";
 
 let today = todayKst();
 let [year, month] = today.split("-").map(Number);
+let allEvents = [];
 let events = [];
 const done = loadDone();
+const tracks = loadTracks();
 
 const $ = (id) => document.getElementById(id);
 const md = (ymd) => `${Number(ymd.slice(5, 7))}/${Number(ymd.slice(8))}`;
@@ -132,6 +134,36 @@ function renderAll() {
   renderCalendar();
 }
 
+// 일반고는 후기 동시 지원이라 항상 켜 둔다. 켜짐은 색 대신 체크 글자로도 알린다.
+function renderFilter() {
+  const bar = $("filter");
+  bar.replaceChildren();
+  const fixed = el("button", "chip on", "✓ 일반고 (항상)");
+  fixed.type = "button";
+  fixed.disabled = true;
+  bar.append(fixed);
+  for (const track of TRACKS) {
+    const on = tracks.has(track);
+    const chip = el("button", on ? "chip on" : "chip");
+    chip.type = "button";
+    chip.setAttribute("aria-pressed", String(on));
+    chip.append(el("i", `dot ${catClass(track)}`), el("span", null, `${on ? "✓ " : ""}${track}`));
+    chip.addEventListener("click", () => {
+      if (on) tracks.delete(track);
+      else tracks.add(track);
+      saveTracks(tracks);
+      renderFilter();
+      applyFilter();
+    });
+    bar.append(chip);
+  }
+}
+
+function applyFilter() {
+  events = filterByTracks(allEvents, tracks);
+  renderAll();
+}
+
 const VIEWS = ["home", "calendar", "all"];
 function showView() {
   const wanted = location.hash.slice(1);
@@ -172,7 +204,7 @@ for (const state of ["deadline", "result", "register", "interview", "apply", "in
 
 // 자정을 넘겨 열려 있던 화면을 다시 볼 때 날짜를 갱신한다.
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && events.length && todayKst() !== today) {
+  if (document.visibilityState === "visible" && allEvents.length && todayKst() !== today) {
     today = todayKst();
     [year, month] = today.split("-").map(Number);
     renderAll();
@@ -180,8 +212,9 @@ document.addEventListener("visibilitychange", () => {
 });
 
 try {
-  events = await loadEvents();
-  renderAll();
+  allEvents = await loadEvents();
+  renderFilter();
+  applyFilter();
   clearBoot();
 } catch {
   showError($("main"));

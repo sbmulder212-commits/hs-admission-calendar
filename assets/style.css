@@ -233,3 +233,13 @@ html { scroll-padding-bottom: var(--tabs-h); }
 a, button, input, label { touch-action: manipulation; }
 .tabs a:active, .month-nav button:active, .cell.has:active, .it-title:active { opacity: .7; }
 .cell.has.today .num { color: inherit; }
+
+/* 전형 필터 */
+.filter { display: flex; flex-wrap: wrap; gap: var(--s2); max-width: 1200px; margin: 0 auto; padding: 0 var(--s3) var(--s2); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 var(--s3);
+  font: inherit; font-size: .9rem; color: var(--muted);
+  background: var(--surface); border: 2px solid var(--edge); border-radius: 999px; cursor: pointer;
+}
+.chip.on { color: var(--text); font-weight: 700; border-color: var(--primary); }
+.chip:disabled { cursor: default; opacity: .85; }
