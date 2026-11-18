@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { loadDone, saveDone } from "./ui.js";
+import { loadDone, saveDone, loadTracks, saveTracks, TRACKS } from "./ui.js";
 
 const fake = (initial = {}) => ({
   data: { ...initial },
@@ -29,4 +29,26 @@ test("문자열이 아닌 항목은 버린다", () => {
 test("저장소가 막혀 있으면 예외 없이 빈 집합과 false", () => {
   assert.equal(loadDone(broken).size, 0);
   assert.equal(saveDone(new Set(["a"]), broken), false);
+});
+
+test("loadTracks: 값이 없으면 전부 켬", () => assert.deepEqual([...loadTracks(fake())], TRACKS));
+
+test("loadTracks: 모르는 이름과 문자열 아닌 항목은 버린다", () => {
+  assert.deepEqual([...loadTracks(fake({ "goip.tracks.v1": '["자사고","없는전형",1]' }))], ["자사고"]);
+});
+
+test("loadTracks: 깨진 JSON·막힌 저장소는 전부 켬", () => {
+  assert.deepEqual([...loadTracks(fake({ "goip.tracks.v1": "{oops" }))], TRACKS);
+  assert.deepEqual([...loadTracks(broken)], TRACKS);
+});
+
+test("loadTracks: 빈 배열은 전부 끈 선택으로 존중", () => {
+  assert.equal(loadTracks(fake({ "goip.tracks.v1": "[]" })).size, 0);
+});
+
+test("saveTracks 후 loadTracks는 같은 집합, 막힌 저장소는 false", () => {
+  const s = fake();
+  assert.equal(saveTracks(new Set(["외고·국제고"]), s), true);
+  assert.deepEqual([...loadTracks(s)], ["외고·국제고"]);
+  assert.equal(saveTracks(new Set(), broken), false);
 });

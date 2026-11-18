@@ -103,3 +103,7 @@ export function monthGrid(year, month) {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
   return weeks;
 }
+
+// 일반고는 후기 동시 지원이라 항상 남기고, 나머지는 고른 전형만 남긴다.
+export const filterByTracks = (events, tracks) =>
+  events.filter((e) => e.category === "일반고" || tracks.has(e.category));

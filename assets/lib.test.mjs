@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   todayKst, isYmd, eventsOn, upcoming, dday, ddayLabel, monthGrid,
-  addDays, thisWeek, nextWeek, nearestDeadline, kindOf, dayState,
+  addDays, thisWeek, nextWeek, nearestDeadline, kindOf, dayState, filterByTracks,
 } from "./lib.js";
 
 const single = { id: "s", date: "2026-12-05" };
@@ -132,4 +132,15 @@ test("dayState: 접수 마감일이 가장 강하고, 같은 날이면 더 중�
   assert.equal(dayState(list, "2026-12-10"), "deadline"); // 하루짜리 접수는 그날이 마감
   assert.equal(dayState(list, "2026-12-08"), null);
   assert.equal(dayState([{ id: "d", title: "원서 접수", date: "2026-12-07" }, { id: "e", title: "합격자 발표", date: "2026-12-07" }], "2026-12-07"), "deadline");
+});
+
+const cat = (id, category) => ({ id, category, date: "2026-12-01" });
+const mixed = [cat("g", "일반고"), cat("a", "자사고"), cat("t", "특성화고·마이스터고")];
+
+test("filterByTracks: 일반고는 항상 남고 고른 전형만 남는다", () => {
+  assert.deepEqual(filterByTracks(mixed, new Set(["자사고"])).map((e) => e.id), ["g", "a"]);
+});
+
+test("filterByTracks: 모두 끄면 일반고만", () => {
+  assert.deepEqual(filterByTracks(mixed, new Set()).map((e) => e.id), ["g"]);
 });

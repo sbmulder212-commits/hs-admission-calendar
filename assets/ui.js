@@ -2,6 +2,9 @@
 
 export const CATEGORIES = ["일반고", "자사고", "외고·국제고", "과학고·영재학교", "특성화고·마이스터고"];
 
+// 일반고는 항상 보이므로 고를 수 있는 전형에서 뺀다.
+export const TRACKS = CATEGORIES.filter((c) => c !== "일반고");
+
 export const catClass = (category) => `cat-${Math.max(0, CATEGORIES.indexOf(category))}`;
 
 export function el(tag, className, text) {
@@ -36,6 +39,27 @@ export function loadDone(storage) {
 export function saveDone(done, storage) {
   try {
     (storage ?? globalThis.localStorage).setItem(DONE_KEY, JSON.stringify([...done]));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// 고른 전형도 이 기기에만 저장한다. 값이 없거나 깨지면 전부 켠다.
+const TRACKS_KEY = "goip.tracks.v1";
+
+export function loadTracks(storage) {
+  try {
+    const list = JSON.parse((storage ?? globalThis.localStorage).getItem(TRACKS_KEY));
+    return new Set(Array.isArray(list) ? list.filter((t) => TRACKS.includes(t)) : TRACKS);
+  } catch {
+    return new Set(TRACKS);
+  }
+}
+
+export function saveTracks(tracks, storage) {
+  try {
+    (storage ?? globalThis.localStorage).setItem(TRACKS_KEY, JSON.stringify([...tracks]));
     return true;
   } catch {
     return false;
