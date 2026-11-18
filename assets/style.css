@@ -242,4 +242,4 @@ a, button, input, label { touch-action: manipulation; }
   background: var(--surface); border: 2px solid var(--edge); border-radius: 999px; cursor: pointer;
 }
 .chip.on { color: var(--text); font-weight: 700; border-color: var(--primary); }
-.chip:disabled { cursor: default; opacity: .85; }
+.chip[aria-disabled="true"] { cursor: default; }

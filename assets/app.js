@@ -140,12 +140,14 @@ function renderFilter() {
   bar.replaceChildren();
   const fixed = el("button", "chip on", "✓ 일반고 (항상)");
   fixed.type = "button";
-  fixed.disabled = true;
+  fixed.setAttribute("aria-pressed", "true");
+  fixed.setAttribute("aria-disabled", "true");
   bar.append(fixed);
   for (const track of TRACKS) {
     const on = tracks.has(track);
     const chip = el("button", on ? "chip on" : "chip");
     chip.type = "button";
+    chip.dataset.track = track;
     chip.setAttribute("aria-pressed", String(on));
     chip.append(el("i", `dot ${catClass(track)}`), el("span", null, `${on ? "✓ " : ""}${track}`));
     chip.addEventListener("click", () => {
@@ -153,6 +155,8 @@ function renderFilter() {
       else tracks.add(track);
       saveTracks(tracks);
       renderFilter();
+      // 다시 그리면 포커스를 잃으므로 같은 버튼으로 돌려놓는다.
+      [...$("filter").children].find((c) => c.dataset.track === track).focus();
       applyFilter();
     });
     bar.append(chip);
